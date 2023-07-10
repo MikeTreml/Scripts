@@ -3,6 +3,7 @@ $TimeCreatedOff =""
 $org=""
 $asname=""
 $address=""
+$ipAddress=""
 $Events = Get-WinEvent -logname "Microsoft-Windows-TerminalServices-LocalSessionManager/Operational" -MaxEvents 200 | where {($_.Id -eq "21" -OR $_.Id -eq "24" -OR $_.Id -eq "25")}
 $Results = Foreach ($Event in $Events) 
 {
@@ -14,11 +15,6 @@ $Results = Foreach ($Event in $Events)
   }
   else
   {
-        $Result.org = $org
-        $Result.asname = $asname
-        $Result.address = $address
-        $Result.IDOn = $Event.Id
-        $Result.TimeCreatedOn = $Event.TimeCreated
       Foreach ($MsgElement in ($Event.Message -split "`n")) 
       {
         $Element = $MsgElement -split ":"
@@ -28,17 +24,26 @@ $Results = Foreach ($Event in $Events)
         }
         If ($Element[0] -like "*Source Network Address") 
         {
-            $Result.AddressOn = $Element[1].Trim(" ") 
-            
-            $urlString='http://ip-api.com/json/'+$Result.AddressOn+'?fields=country,regionName,city,org,asname'
+            $ipAddress = $Element[1].Trim(" ") 
+            write-host $ipAddress
+            $Result.AddressOn = $ipAddress 
+            $urlString='http://ip-api.com/json/'+$ipAddress+'?fields=country,regionName,city,org,asname'
             $IpAddresLocation = Invoke-RestMethod -Uri $urlString
             $org = $IpAddresLocation.org
             $asname = $IpAddresLocation.asname
             $address = $IpAddresLocation.city +" - "+$IpAddresLocation.regionName+" - "+$IpAddresLocation.country
+
+            write-host $ipAddress + " " +$asname
         }
+        
+        $Result.org = $org
+        $Result.asname = $asname
+        $Result.address = $address
+        $Result.IDOn = $Event.Id
+        $Result.TimeCreatedOn = $Event.TimeCreated
         $Result.IDOff = $IDOff
         $Result.TimeCreatedOff = $TimeCreatedOff
-         }
+      }
       $Result
   }
 } 
@@ -46,5 +51,3 @@ $Results | Select UserOn,AddressOn,TimeCreatedOn,TimeCreatedOff,IDOn,IDOff,org,a
 
 $urlString='http://ip-api.com/json/'+$Address+'?fields=country,regionName,city,org,asname'
 $IpAddresLocation = Invoke-RestMethod -Uri $urlString
-
-
