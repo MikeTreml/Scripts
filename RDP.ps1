@@ -49,5 +49,3 @@ $Results = Foreach ($Event in $Events)
 } 
 $Results | Select UserOn,AddressOn,TimeCreatedOn,TimeCreatedOff,IDOn,IDOff,org,asname,address | Out-GridView
 
-$urlString='http://ip-api.com/json/'+$Address+'?fields=country,regionName,city,org,asname'
-$IpAddresLocation = Invoke-RestMethod -Uri $urlString
