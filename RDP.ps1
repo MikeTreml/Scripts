@@ -4,7 +4,7 @@ $org=""
 $asname=""
 $address=""
 $ipAddress=""
-$Events = Get-WinEvent -logname "Microsoft-Windows-TerminalServices-LocalSessionManager/Operational" -MaxEvents 200 | where {($_.Id -eq "21" -OR $_.Id -eq "24" -OR $_.Id -eq "25")}
+$Events = Get-WinEvent -logname "Microsoft-Windows-TerminalServices-LocalSessionManager/Operational" -MaxEvents 100 | where {($_.Id -eq "21" -OR $_.Id -eq "24" -OR $_.Id -eq "25")}
 $Results = Foreach ($Event in $Events) 
 {
   $Result = "" | Select UserOn,AddressOn,TimeCreatedOn,TimeCreatedOff,IDOn,IDOff,org,asname,address
