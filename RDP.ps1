@@ -10,7 +10,7 @@ $Results = Foreach ($Event in $Events)
   $Result = "" | Select UserOn,AddressOn,TimeCreatedOn,TimeCreatedOff,IDOn,IDOff,org,asname,address
   if($Event.Id -eq "24")
   {
-        $IDOff = $Event.Id
+      $IDOff = $Event.Id
       $TimeCreatedOff = $Event.TimeCreated
   }
   else
@@ -25,17 +25,13 @@ $Results = Foreach ($Event in $Events)
         If ($Element[0] -like "*Source Network Address") 
         {
             $ipAddress = $Element[1].Trim(" ") 
-            write-host $ipAddress
             $Result.AddressOn = $ipAddress 
             $urlString='http://ip-api.com/json/'+$ipAddress+'?fields=country,regionName,city,org,asname'
             $IpAddresLocation = Invoke-RestMethod -Uri $urlString
             $org = $IpAddresLocation.org
             $asname = $IpAddresLocation.asname
             $address = $IpAddresLocation.city +" - "+$IpAddresLocation.regionName+" - "+$IpAddresLocation.country
-
-            write-host $ipAddress + " " +$asname
         }
-        
         $Result.org = $org
         $Result.asname = $asname
         $Result.address = $address
